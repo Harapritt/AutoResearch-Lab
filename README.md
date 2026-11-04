@@ -2,10 +2,6 @@ AutoResearch-Lab
 
 An Autonomous Machine Learning Research and Experimentation Framework
 
-""Python" (https://img.shields.io/badge/Python-3.10%2B-blue.svg)" (https://www.python.org/)
-""PyTorch" (https://img.shields.io/badge/PyTorch-Deep%20Learning-orange.svg)" (https://pytorch.org/)
-""License" (https://img.shields.io/badge/License-MIT-green.svg)" (LICENSE)
-""Development" (https://img.shields.io/badge/Status-Under%20Development-yellow.svg)"
 
 Overview
 
