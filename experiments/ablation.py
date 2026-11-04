@@ -1,96 +1,111 @@
+import torch
+import pandas as pd
 
-from dataclasses import dataclass
-from typing import Callable, Dict, List, Any
+from torch.optim import AdamW
+from transformers import AutoModelForSequenceClassification
+
+from configs.experiment_config import ExperimentConfig
+from data.ag_news_loader import AGNewsLoader
+from utils.reproducibility import set_seed, get_device
 
 
-@dataclass
-class AblationResult:
-    experiment_name: str
-    configuration: Dict[str, Any]
-    metrics: Dict[str, float]
+def run_ablation(max_length):
+
+    config = ExperimentConfig()
+    config.max_length = max_length
+
+    set_seed(config.random_seed)
+    device = get_device()
+
+    loader = AGNewsLoader(
+        model_name=config.model_name,
+        max_length=max_length
+    )
+
+    dataloaders = loader.get_dataloaders(
+        batch_size=config.batch_size
+    )
+
+    model = AutoModelForSequenceClassification.from_pretrained(
+        config.model_name,
+        num_labels=4
+    ).to(device)
+
+    optimizer = AdamW(
+        model.parameters(),
+        lr=config.learning_rate
+    )
+
+    for epoch in range(config.num_epochs):
+
+        model.train()
+
+        for batch in dataloaders["train"]:
+
+            batch = {
+                key: value.to(device)
+                for key, value in batch.items()
+            }
+
+            optimizer.zero_grad()
+            outputs = model(**batch)
+            outputs.loss.backward()
+            optimizer.step()
+
+    model.eval()
+
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+
+        for batch in dataloaders["test"]:
+
+            labels = batch["labels"].to(device)
+
+            inputs = {
+                key: value.to(device)
+                for key, value in batch.items()
+                if key != "labels"
+            }
+
+            outputs = model(**inputs)
+            predictions = outputs.logits.argmax(dim=1)
+
+            correct += (predictions == labels).sum().item()
+            total += labels.size(0)
+
+    accuracy = correct / total
+
+    return {
+        "max_length": max_length,
+        "accuracy": accuracy
+    }
 
 
-class AblationStudy:
+def main():
 
-    def __init__(self, baseline_metrics):
-        self.baseline_metrics = baseline_metrics
-        self.results: List[AblationResult] = []
+    results = []
 
-    def run_experiment(
-        self,
-        experiment_name: str,
-        configuration: Dict[str, Any],
-        experiment_fn: Callable
-    ):
-        metrics = experiment_fn(configuration)
+    for length in [128, 256, 512]:
 
-        if not isinstance(metrics, dict):
-            raise TypeError("Experiment must return a metrics dictionary.")
+        print(f"Running experiment with max_length={length}")
 
-        result = AblationResult(
-            experiment_name=experiment_name,
-            configuration=configuration,
-            metrics=metrics
-        )
+        result = run_ablation(length)
+        results.append(result)
 
-        self.results.append(result)
+        print(result)
 
-        return result
+    dataframe = pd.DataFrame(results)
 
-    def compare_results(self, metric="accuracy"):
+    dataframe.to_csv(
+        "ablation_results.csv",
+        index=False
+    )
 
-        if metric not in self.baseline_metrics:
-            raise ValueError("Metric not found in baseline.")
-
-        baseline = self.baseline_metrics[metric]
-
-        comparisons = []
-
-        for result in self.results:
-
-            if metric not in result.metrics:
-                continue
-
-            score = result.metrics[metric]
-
-            comparisons.append({
-                "experiment": result.experiment_name,
-                "baseline_score": baseline,
-                "experiment_score": score,
-                "difference": score - baseline
-            })
-
-        return comparisons
+    print("\nAblation results:")
+    print(dataframe)
 
 
 if __name__ == "__main__":
-
-    baseline = {
-        "accuracy": 0.85,
-        "f1_score": 0.84
-    }
-
-    study = AblationStudy(baseline)
-
-    # Demonstration experiment function
-    def mock_experiment(configuration):
-        return {
-            "accuracy": 0.87,
-            "f1_score": 0.86
-        }
-
-    study.run_experiment(
-        experiment_name="attention_ablation",
-        configuration={
-            "attention": "modified",
-            "dropout": 0.1
-        },
-        experiment_fn=mock_experiment
-    )
-
-    results = study.compare_results("accuracy")
-
-    print("Ablation Study Results")
-
-    for result in results:
-        print(result)
+    main()
