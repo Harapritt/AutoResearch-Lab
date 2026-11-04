@@ -2,7 +2,6 @@ AutoResearch-Lab
 
 An Autonomous Machine Learning Research and Experimentation Framework
 
-
 Overview
 
 AutoResearch-Lab is an autonomous machine learning research and experimentation framework designed to streamline the machine learning research lifecycle.
