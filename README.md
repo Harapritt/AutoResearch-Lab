@@ -1,6 +1,6 @@
 AutoResearch-Lab
 
-An Autonomous Machine Learning Research and Experimentation Framework
+An Autonomous Machine Learning Research and Experimentation Framework.
 
 Overview
 
