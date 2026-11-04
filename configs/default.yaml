@@ -1,0 +1,12 @@
+experiment_name: baseline_distilbert
+dataset_name: ag_news
+model_name: distilbert-base-uncased
+
+num_epochs: 3
+batch_size: 16
+learning_rate: 0.00002
+max_length: 256
+random_seed: 42
+
+output_dir: outputs
+checkpoint_dir: checkpoints
