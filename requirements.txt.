@@ -1,0 +1,14 @@
+torch
+transformers
+datasets
+scikit-learn
+numpy
+pandas
+scipy
+matplotlib
+optuna
+mlflow
+fastapi
+uvicorn
+pytest
+jupyter
