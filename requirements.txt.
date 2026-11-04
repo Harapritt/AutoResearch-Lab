@@ -12,3 +12,4 @@ fastapi
 uvicorn
 pytest
 jupyter
+PyYAML
