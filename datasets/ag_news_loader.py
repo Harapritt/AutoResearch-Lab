@@ -1,28 +1,23 @@
 
 from datasets import load_dataset
+from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
+import torch
 
 
 class AGNewsLoader:
 
-    def __init__(
-        self,
-        model_name="distilbert-base-uncased",
-        max_length=256
-    ):
+    def __init__(self, model_name="bert-base-uncased", max_length=128):
         self.model_name = model_name
         self.max_length = max_length
-
         self.dataset = None
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name
-        )
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     def load_data(self):
-        self.dataset = load_dataset("ag_news")
+        self.dataset = load_dataset("fancyzhx/ag_news")
         return self.dataset
 
-    def preprocess(self, examples):
+    def tokenize_function(self, examples):
         return self.tokenizer(
             examples["text"],
             padding="max_length",
@@ -30,12 +25,13 @@ class AGNewsLoader:
             max_length=self.max_length
         )
 
-    def tokenize_data(self):
+    def get_dataloaders(self, batch_size=16):
+
         if self.dataset is None:
             self.load_data()
 
         tokenized_dataset = self.dataset.map(
-            self.preprocess,
+            self.tokenize_function,
             batched=True
         )
 
@@ -48,15 +44,16 @@ class AGNewsLoader:
             columns=["input_ids", "attention_mask", "labels"]
         )
 
-        return tokenized_dataset
+        train_loader = DataLoader(
+            tokenized_dataset["train"],
+            batch_size=batch_size,
+            shuffle=True
+        )
 
+        test_loader = DataLoader(
+            tokenized_dataset["test"],
+            batch_size=batch_size,
+            shuffle=False
+        )
 
-if __name__ == "__main__":
-    loader = AGNewsLoader()
-
-    dataset = loader.tokenize_data()
-
-    print("Dataset loaded successfully.")
-    print(dataset)
-    print("Training samples:", len(dataset["train"]))
-    print("Test samples:", len(dataset["test"]))
+        return train_loader, test_loader
