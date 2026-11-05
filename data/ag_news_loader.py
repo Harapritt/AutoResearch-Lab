@@ -19,7 +19,7 @@ class AGNewsLoader:
         self.random_seed = random_seed
 
     def load_data(self):
-        return load_dataset("ag_news")
+        return load_dataset("fancyzhx/ag_news")
 
     def tokenize_data(self, dataset):
 
