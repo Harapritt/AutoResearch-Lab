@@ -1,100 +1,109 @@
-
 AutoResearch-Lab
 
-An autonomous machine learning research and experimentation framework.
+An autonomous machine learning research and experimentation framework for model training, hyperparameter optimization, ablation studies, statistical evaluation, and reproducible experiments.
 
 About
 
-AutoResearch-Lab is a machine learning research project focused on automating experimentation, model optimization, evaluation, and reproducibility.
+AutoResearch-Lab is a research-oriented machine learning project designed to organize and automate key stages of model experimentation.
 
-The goal is to develop a framework that helps researchers and ML engineers design experiments, evaluate models, and analyze experimental results systematically.
+The project uses the AG News text classification dataset and Transformer-based models to explore model performance and experimental configurations.
 
-Objectives
+Key Features
 
-- Automate machine learning experiments.
-- Generate and evaluate research hypotheses.
-- Optimize model architectures and hyperparameters.
-- Perform ablation studies.
-- Analyze model performance.
-- Apply statistical evaluation.
-- Maintain reproducible experiments.
-- Generate research reports.
-
-Initial Research Focus
-
-Efficient Transformer Architectures.
-
-Research areas:
-
-- Attention mechanism optimization
-- Parameter-efficient fine-tuning
-- Model quantization
-- Knowledge distillation
-- Training efficiency
-- Inference optimization
+- Experiment Configuration: Centralized configuration for training parameters.
+- Model Training: Integrated training and evaluation pipeline.
+- Hyperparameter Optimization: Optuna-based optimization of learning rate and batch size.
+- Ablation Studies: Comparison of different sequence lengths.
+- Evaluation: Accuracy, precision, recall, F1-score, and classification reports.
+- Statistical Analysis: Statistical comparison of experimental results.
+- Experiment Tracking: MLflow-based experiment logging.
+- Reproducibility: Random seed management and device selection.
+- Testing: Automated tests for core project components.
 
 Technology Stack
 
 - Python
 - PyTorch
-- Scikit-learn
 - Hugging Face Transformers
+- Hugging Face Datasets
+- Scikit-learn
 - Optuna
 - MLflow
 - NumPy
 - Pandas
 - SciPy
-- FastAPI
-- Streamlit
-- Docker
+- Matplotlib
+- PyYAML
+- Pytest
 
-Project Structure
+Dataset
 
-AutoResearch-Lab/
-├── agents/
-├── configs/
-├── datasets/
-├── models/
-├── experiments/
-├── evaluation/
-├── tracking/
-├── api/
-├── dashboard/
-├── notebooks/
-├── tests/
-├── papers/
-├── requirements.txt
-├── Dockerfile
-├── .gitignore
-└── README.md
+The project uses the AG News dataset, a four-class news topic classification dataset.
 
-Methodology
+The dataset is loaded through the Hugging Face Datasets library.
 
-1. Define a research problem.
-2. Formulate a hypothesis.
-3. Establish a baseline model.
-4. Design experiments.
-5. Execute experiments.
-6. Evaluate results.
-7. Perform statistical analysis.
-8. Document findings.
-9. Validate reproducibility.
+Project Workflow
 
-Evaluation
+1. Configure the experiment.
+2. Load and preprocess the dataset.
+3. Initialize the Transformer model.
+4. Train the model.
+5. Evaluate model performance.
+6. Optimize hyperparameters.
+7. Run ablation experiments.
+8. Analyze experimental results.
+9. Track experiments and maintain reproducibility.
 
-Models and experiments will be evaluated using:
+Running the Project
 
-- Accuracy and other task-specific metrics
-- Training time
-- Inference latency
-- Parameter count
-- Computational efficiency
-- Statistical significance
+Install dependencies:
+
+pip install -r requirements.txt
+
+Run the integrated experiment:
+
+python -m experiments.run_experiment
+
+Run hyperparameter optimization:
+
+python -m optimization.run_optimization
+
+Run ablation experiments:
+
+python -m experiments.run_ablation
+
+Run tests:
+
+python -m pytest tests/
+
+Evaluation Metrics
+
+The framework supports:
+
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- Classification report
+- Confusion matrix
+- Statistical significance testing
+
+Research Focus
+
+The project focuses on reproducible machine learning experimentation, Transformer-based text classification, hyperparameter optimization, and systematic model evaluation.
 
 Development Status
 
-Currently under development.
+The core framework and experiment scripts have been developed. Full execution, test results, and experimental findings should be reported after successful verification.
+
+Future Improvements
+
+- Validation-based hyperparameter selection
+- More model architectures
+- Expanded datasets
+- Improved experiment automation
+- More comprehensive statistical comparisons
 
 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See "LICENSE" (LICENSE) for details.
